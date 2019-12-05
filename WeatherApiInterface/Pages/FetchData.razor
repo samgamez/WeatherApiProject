@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 
 @using WeatherApiInterface.Data
+@using System.Net.Http;
 @inject WeatherForecastService ForecastService
 @inject HttpClient Http
 
@@ -38,10 +39,21 @@ else
 }
 
 @code {
+
+
     WeatherForecast[] forecasts;
 
     protected override async Task OnInitializedAsync()
     {
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        WeatherQueryDto query = new WeatherQueryDto
+        {
+            City = "Ogden,us",
+            ApiKey = "2038ec5184263f924f491fb3143efda8"
+        };
+
+        //await Http.GetJsonAsync<WeatherForecastDto>("api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=2038ec5184263f924f491fb3143efda8")
+
+
     }
 }
