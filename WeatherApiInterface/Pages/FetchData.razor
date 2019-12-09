@@ -1,59 +1,78 @@
 ﻿@page "/fetchdata"
 
 @using WeatherApiInterface.Data
-@using System.Net.Http;
+
+@* Inject weather forecast service. *@
 @inject WeatherForecastService ForecastService
-@inject HttpClient Http
 
 <h1>Weather forecast</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+@* City entry form. *@
+<label>Enter a city:</label>
+<input @bind="@cityInput" />
 
-@if (forecasts == null)
+@* @onclick is a new blazor thing. The OnGoClick would show an error without it. *@
+<button type="button"
+        @onclick="@OnGoClick">
+    Go
+</button>
+
+@* These if blocks validate the state. If the todaysForecast object is not null and the cityNotFound flag is false, display the weather info. *@
+@if (todaysForecast != null && !cityNotFound)
 {
-    <p><em>Loading...</em></p>
+    <h2>City: @todaysForecast.City</h2>
+    <div>
+        <img src="@todaysForecast.ImgUrl" />
+    </div>
+    <div>Temperature: @todaysForecast.Temp degrees F</div>
+    <div>Humidity: @todaysForecast.Humidity %</div>
+    <div>Pressure: @todaysForecast.Pressure hPa</div>
+    <div>Wind Speed: @todaysForecast.WindSpeed mph</div>
 }
-else
+else if (cityNotFound)
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <p>City not found</p>
+}
+else if (isSearching)
+{
+    <p>Getting weather for @cityInput</p>
 }
 
 @code {
 
+    // Local variables
+    WeatherForecastDto todaysForecast;
 
-    WeatherForecast[] forecasts;
+    private string cityInput;
 
-    protected override async Task OnInitializedAsync()
+    private bool cityNotFound = false;
+
+    private bool isSearching = false;
+
+    // Go button click function.
+    private async void OnGoClick()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
-        WeatherQueryDto query = new WeatherQueryDto
+        // Turn on the searching flag.
+        isSearching = true;
+
+        // Reset local variables.
+        cityNotFound = false;
+        todaysForecast = null;
+
+        // Use try catch block to catch the 404 error that gets thrown if the city is not found.
+        try
         {
-            City = "Ogden,us",
-            ApiKey = "2038ec5184263f924f491fb3143efda8"
-        };
+            // await is like sending an http request in JavaScript. It can call an asynchronous function on the server to retrieve some data.
+            todaysForecast = await ForecastService.GetForecastResult(cityInput);
+        }
+        catch
+        {
+            cityNotFound = true;
+        }
 
-        //await Http.GetJsonAsync<WeatherForecastDto>("api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=2038ec5184263f924f491fb3143efda8")
+        isSearching = false;
 
-
+        // Blazor doesn't update the UI when the state is changed so we need to call this manually.
+        StateHasChanged();
     }
 }

@@ -10,5 +10,10 @@ namespace WeatherApiInterface.Data
 		public double Temp { get; set; }
 		public double Pressure { get; set; }
 		public double Humidity { get; set; }
+		public string IconCode { get; set; }
+		public string IconDescription { get; set; }
+		public double WindSpeed { get; set; }
+		public string ImgUrl { get; set; }
+		public string City { get; set; }
 	}
 }

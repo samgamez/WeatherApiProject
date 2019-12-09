@@ -26,8 +26,14 @@ namespace WeatherApiInterface
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
+			// I added this line to make it possible to use the HttpClientFactory in the WeatherForecastService class.
+			services.AddHttpClient();
+
+
 			services.AddRazorPages();
-			services.AddServerSideBlazor();
+
+
+			services.AddServerSideBlazor(); //.AddCircuitOptions(options => { options.DetailedErrors = true; }); I used this look at a blazor error.
 			services.AddSingleton<WeatherForecastService>();
 		}
 
