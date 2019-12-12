@@ -20,16 +20,19 @@
 @* These if blocks validate the state. If the todaysForecast object is not null and the cityNotFound flag is false, display the weather info. *@
 @if (todaysForecast != null && !cityNotFound)
 {
-    <h2>City: @todaysForecast.City</h2>
-    <div>
-        <img src="@todaysForecast.ImgUrl" 
-             alt="@todaysForecast.IconDescription"
-             title="@todaysForecast.IconDescription" />
+
+    <div style="margin-top:75px;margin-left:auto;margin-right:auto;font-size:18px;font-weight:bold;">
+        <h2>@todaysForecast.City</h2>
+        <div>
+            <img src="@todaysForecast.ImgUrl"
+                 alt="@todaysForecast.IconDescription"
+                 title="@todaysForecast.IconDescription" style="width:100px;height:auto;margin-left:40px;" />
+        </div>
+        <div>Temperature: @todaysForecast.Temp &#176;F</div>
+        <div>Humidity: @todaysForecast.Humidity%</div>
+        <div>Pressure: @todaysForecast.Pressure hPa</div>
+        <div>Wind Speed: @todaysForecast.WindSpeed mph</div>
     </div>
-    <div>Temperature: @todaysForecast.Temp degrees F</div>
-    <div>Humidity: @todaysForecast.Humidity %</div>
-    <div>Pressure: @todaysForecast.Pressure hPa</div>
-    <div>Wind Speed: @todaysForecast.WindSpeed mph</div>
 }
 else if (cityNotFound)
 {
